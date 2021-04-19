@@ -22,3 +22,7 @@ Usage cases:
 	VBH setgamepath <path>
 		In the (extremely) rare case that your Valheim data is stored in a place other than the
 		default directory, this command lets you specify where your data is stored.
+
+Contact:
+	If you want to contact me with bug reports, suggestions, or general feedback, please paste
+	this link into your favorite browser: <TODO>
