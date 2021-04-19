@@ -119,8 +119,8 @@ namespace VBM
                 }
             }
 
-            File.Copy(backup.Database.FullName, game.Database.FullName);
-            File.Copy(backup.Metadata.FullName, game.Metadata.FullName);
+            File.Copy(backup.Database.FullName, game.Database.FullName, true);
+            File.Copy(backup.Metadata.FullName, game.Metadata.FullName, true);
             Console.WriteLine("Operation success.");
         }
         static void ShowHelp()
