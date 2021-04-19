@@ -88,8 +88,7 @@ namespace VBM
                 }
             }
 
-            File.Copy(game.Database.FullName, backup.Database.FullName, true);
-            File.Copy(game.Metadata.FullName, backup.Metadata.FullName, true);
+            Copy(game, backup);
             Console.WriteLine("Operation success.");
         }
         static void Restore(string world)
@@ -119,9 +118,25 @@ namespace VBM
                 }
             }
 
-            File.Copy(backup.Database.FullName, game.Database.FullName, true);
-            File.Copy(backup.Metadata.FullName, game.Metadata.FullName, true);
+            Copy(backup, game);
             Console.WriteLine("Operation success.");
+        }
+        static void Copy(World source, World dest)
+        {
+            try
+            {
+                File.Copy(source.Database.FullName, dest.Database.FullName, true);
+                File.Copy(source.Metadata.FullName, dest.Metadata.FullName, true);
+            }
+            catch (IOException e)
+            {
+                var oldColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("An unexpected error occurred while copying files:");
+                Console.WriteLine(e.Message);
+                Console.ForegroundColor = oldColor;
+                Environment.Exit(0);
+            }
         }
         static void ShowHelp()
         {
