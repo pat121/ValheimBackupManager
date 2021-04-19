@@ -1,0 +1,24 @@
+
+This utility is designed to prevent loss of game progress for many reasons, including but not
+limited to:
+  1.) Frequent switching between Steam profiles or computer accounts
+  2.) Freak accidents involving the Steam Cloud
+  3.) Annoying siblings that mess up your save
+
+All of these and more are my inspiration for creating this tool. Enjoy!
+
+Usage cases:
+	VBH
+		Prints this help message and exits.
+	VBH help
+		Prints this help message and exits.
+	VBH backup <world-name>
+		Copies the given world to the backups directory. If the file already exists, you will
+		be asked if you want to overwrite it.
+	VBH restore <world-name>
+		Copies the given world from the backups directory back to the game directory. Always
+		asks for confirmation and gives you information about both files (like when they were
+		last modified and if they are identical).
+	VBH setgamepath <path>
+		In the (extremely) rare case that your Valheim data is stored in a place other than the
+		default directory, this command lets you specify where your data is stored.
