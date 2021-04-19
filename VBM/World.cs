@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using SHA256 = System.Security.Cryptography.SHA256;
-    
+
 namespace VBM
 {
     class World
