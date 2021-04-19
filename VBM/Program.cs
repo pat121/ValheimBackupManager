@@ -93,7 +93,7 @@ namespace VBM
         }
         static void Restore(string world)
         {
-            var backup = World.FromGameDir(world);
+            var backup = World.FromBackupDir(world);
             var game = World.FromGameDir(world);
 
             if (!backup.IsValid())
