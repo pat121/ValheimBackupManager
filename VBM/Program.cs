@@ -75,7 +75,12 @@ namespace VBM
             if (backup.IsValid())
             {
                 Console.WriteLine("That backup file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
-                // TODO: comparison of both
+                
+                Console.WriteLine($"{world}.fwl (game) last modified {game.Metadata.LastWriteTime}");
+                Console.WriteLine($"{world}.db  (game) last modified {game.Database.LastWriteTime}");
+                Console.WriteLine($"{world}.fwl (backup) last modified {backup.Metadata.LastWriteTime}");
+                Console.WriteLine($"{world}.db  (backup) last modified {backup.Database.LastWriteTime}");
+
                 if (Console.ReadKey(true).Key != ConsoleKey.Y)
                 {
                     Console.WriteLine("Operation canceled.");
