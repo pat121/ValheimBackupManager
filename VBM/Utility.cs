@@ -21,9 +21,14 @@ namespace VBM
             DirectorySep = windows ? '\\' : '/';
 
             if (File.Exists("path.txt"))
+            {
                 GameDir = File.ReadAllText("path.txt");
-            else
-                GameDir = GetUserProfile() + (windows ? WindowsGameDir : LinuxGameDir);
+                if (Directory.Exists(GameDir))
+                    return;
+                File.Delete("path.txt");
+                Console.WriteLine("Your custom game install path did not exist and has been reset to the default.");
+            }
+            GameDir = GetUserProfile() + (windows ? WindowsGameDir : LinuxGameDir);
         }
 
         public static void CheckGameInstalled()
