@@ -29,13 +29,6 @@ namespace VBM
             GameDir = GetUserProfile() + (windows ? WindowsGameDir : LinuxGameDir);
         }
 
-        public static void CheckGameInstalled()
-        {
-            if (Directory.Exists(GameDir))
-                return;
-            Console.WriteLine("Error: could not locate Valheim save data. Please ensure that you have the game installed, or if your save data is stored in a separate location, please specify that location with the command \"VBM setgamepath <path>\"");
-            Environment.Exit(0);
-        }
         public static void CheckOS()
         {
             if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux())
@@ -127,6 +120,10 @@ namespace VBM
                 Console.WriteLine("Performing first-time setup.");
             Directory.CreateDirectory($"{BackupDir}worlds");
             Directory.CreateDirectory($"{BackupDir}characters");
+        }
+        public static bool IsGameInstalled()
+        {
+            return Directory.Exists(GameDir);
         }
         public static void PrintErrorAndExit(string message)
         {
