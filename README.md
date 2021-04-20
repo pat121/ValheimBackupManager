@@ -33,8 +33,7 @@ if [ -d "$myDirectory" ]; then
    export PATH=$PATH:$myDirectory
 fi
 ```
-4. Save the file by pressing escape, then type this exactly: ":wq"
-5. You're done!
+5. Save the file by pressing escape, then type this exactly: ":wq"
 
 # Uninstalling
 If you want to delete VBM for whatever reason, all you have to do is delete its containing folder. VBM doesn't modify the Windows registry or put configuration files in weird places, so there's no special cleanup that needs to be done if you want to delete it. If you want, you can also delete the backups directory:
