@@ -66,6 +66,7 @@ namespace VBM
             return Result.Fail($"Invalid argument: {objectType}");
         }
 
+        [AccessibleWhenNotInstalled]
         [Command("Help")]
         public static Result Help()
         {
@@ -135,6 +136,7 @@ namespace VBM
         }
 
         [Command("SetGamePath")]
+        [AccessibleWhenNotInstalled]
         public static Result SetGamePath(string newPath)
         {
             if (Directory.Exists(newPath))
