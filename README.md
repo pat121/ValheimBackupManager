@@ -18,7 +18,7 @@ If you want to be able to skip step 2 every time, follow these instructions:
 2. Click the button at the bottom of the window labeled "Environment Variables"
 3. Select the "Path" environment variable from the list labeled "User variables for `your-username`". If for whatever reason there isn't already an environment variable named Path, click "New..." to create one and set its value to the place where you extracted VBM. Once you click OK to close all the screens you just opened, you're all set and can stop reading the instructions now.
 4. After you've selected the "Path" user environment variable, click Edit.
-5. Click Add and type in the name of the directory where you extracted VBM
+5. Click New and type in the name of the directory where you extracted VBM
 6. Click OK to close all the menus, and you're done! Now you can access VBM commands from any command prompt.
 
 ### Linux
