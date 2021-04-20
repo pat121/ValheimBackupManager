@@ -118,7 +118,7 @@ namespace VBM
         }
         private static string GetUserProfile()
         {
-            return Environment.GetEnvironmentVariable(OperatingSystem.IsWindows() ? "USERPROFILE" : "USER");
+            return Environment.GetEnvironmentVariable(OperatingSystem.IsWindows() ? "USERPROFILE" : "HOME");
         }
         public static void Initialize()
         {
