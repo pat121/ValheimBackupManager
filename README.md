@@ -2,7 +2,7 @@
 Repository for VBM, a CLI tool designed to stop Steam Cloud from screwing me over.
 
 # Installation
-All you have to do to install the program is download and extract one of the release packages. You'll have to go through some steps every time you want to use the program, though. Take note of where you extracted the files because you'll need that every time you want to use VBM.
+All you have to do to install the program is download and extract one of the release packages. You'll have to go through some steps every time you want to use the program, though. Take note of where you extracted the files because you'll need that every time you want to use VBM, so try to make it someplace simple.
 
 # Running VBM
 1. Open your OS's command line interface:
