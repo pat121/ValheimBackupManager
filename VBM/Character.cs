@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using SHA256 = System.Security.Cryptography.SHA256;
 
 namespace VBM
 {
@@ -18,6 +20,14 @@ namespace VBM
         public static Character FromGameDir(string name)
         {
             return new Character(name, true);
+        }
+        public string Hash()
+        {
+            if (!IsValid())
+                return "";
+            using var sha = SHA256.Create();
+            using var f = Char.OpenRead();
+            return Convert.ToBase64String(sha.ComputeHash(f));
         }
         public bool IsValid()
         {
