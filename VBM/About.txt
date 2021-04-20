@@ -12,13 +12,15 @@ Usage cases:
 		Prints this help message and exits.
 	VBH help
 		Prints this help message and exits.
-	VBH backup <world-name>
-		Copies the given world to the backups directory. If the file already exists, you will
-		be asked if you want to overwrite it.
-	VBH restore <world-name>
-		Copies the given world from the backups directory back to the game directory. Always
-		asks for confirmation and gives you information about both files (like when they were
-		last modified and if they are identical).
+	VBH backup <world-name> [world-type]
+		Copies the given file to the backups directory. If the file already exists, you will
+		be asked if you want to overwrite it. The world-type argument is optional and tells
+		VBM if it is a world or a character that you want to back up. The default is world.
+	VBH restore <world-name> [world-type]
+		Copies the given file from the backups directory back to the game directory. Asks for
+		confirmation if the file already exists in the game directory. The world-type argument
+		is optional and tells VBM if it is a world or a character that you want to back up. The
+		default is world.
 	VBH setgamepath <path>
 		In the (extremely) rare case that your Valheim data is stored in a place other than the
 		default directory, this command lets you specify where your data is stored.
