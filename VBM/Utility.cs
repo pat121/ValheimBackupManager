@@ -45,6 +45,17 @@ namespace VBM
             Console.WriteLine("This program is only intended for Windows and Linux.");
             Environment.Exit(0);
         }
+        public static void Copy(Character source, Character dest)
+        {
+            try
+            {
+                File.Copy(source.Char.FullName, dest.Char.FullName, true);
+            }
+            catch (IOException e)
+            {
+                PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
+            }
+        }
         public static void Copy(World source, World dest)
         {
             try
@@ -54,12 +65,7 @@ namespace VBM
             }
             catch (IOException e)
             {
-                var oldColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("An unexpected error occurred while copying files:");
-                Console.WriteLine(e.Message);
-                Console.ForegroundColor = oldColor;
-                Environment.Exit(0);
+                PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
             }
         }
         private static string GetUserProfile()

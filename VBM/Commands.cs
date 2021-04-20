@@ -6,36 +6,54 @@ namespace VBM
     static class Commands
     {
         [Command("Backup")]
-        public static Result Backup(string worldName)
+        public static Result Backup(string objectName, string objectType = "world")
         {
-            var game = World.FromGameDir(worldName);
-            var backup = World.FromBackupDir(worldName);
-
-            if (!game.IsValid())
-                return Result.Fail("One or more game files weren't found");
-
-            if (backup.IsValid())
+            if (objectType == "character")
             {
-                Console.WriteLine("That backup file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
+                var game = Character.FromGameDir(objectName);
+                var backup = Character.FromBackupDir(objectName);
 
-                Console.WriteLine($"{worldName}.fwl (game) last modified {game.Metadata.LastWriteTime}");
-                Console.WriteLine($"{worldName}.db  (game) last modified {game.Database.LastWriteTime}");
-                Console.WriteLine($"{worldName}.fwl (backup) last modified {backup.Metadata.LastWriteTime}");
-                Console.WriteLine($"{worldName}.db  (backup) last modified {backup.Database.LastWriteTime}");
+                if (!game.IsValid())
+                    return Result.Fail("One or more game files weren't found");
 
-                if (Console.ReadKey(true).Key != ConsoleKey.Y)
-                    return Result.Canceled;
-            }
+                if (backup.IsValid())
+                {
+                    Console.WriteLine("That backup file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no");
 
-            try
-            {
+                    // TODO: comparison
+
+                    if (Console.ReadKey(true).Key != ConsoleKey.Y)
+                        return Result.Canceled;
+                }
+
                 Utility.Copy(game, backup);
+                return Result.Succeed($"Character \"{objectName}\" backed up successfully");
             }
-            catch (Exception e)
+            else if (objectType == "world")
             {
-                return Result.Fail("An unexpected error occurred: " + e.Message);
+                var game = World.FromGameDir(objectName);
+                var backup = World.FromBackupDir(objectName);
+
+                if (!game.IsValid())
+                    return Result.Fail("One or more game files weren't found");
+
+                if (backup.IsValid())
+                {
+                    Console.WriteLine("That backup file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
+
+                    Console.WriteLine($"{objectName}.fwl (game) last modified {game.Metadata.LastWriteTime}");
+                    Console.WriteLine($"{objectName}.db  (game) last modified {game.Database.LastWriteTime}");
+                    Console.WriteLine($"{objectName}.fwl (backup) last modified {backup.Metadata.LastWriteTime}");
+                    Console.WriteLine($"{objectName}.db  (backup) last modified {backup.Database.LastWriteTime}");
+
+                    if (Console.ReadKey(true).Key != ConsoleKey.Y)
+                        return Result.Canceled;
+                }
+
+                Utility.Copy(game, backup);
+                return Result.Succeed($"World \"{objectName}\" backed up successfully");
             }
-            return Result.Succeed("World \"" + worldName + "\" backed up successfully");
+            return Result.Fail("Invalid argument: " + objectType);
         }
         [Command("Help")]
         public static Result Help()
