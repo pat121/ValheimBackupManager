@@ -15,21 +15,23 @@ function RemoveFileIfExists($x)
 }
 
 $output="$Env:USERPROFILE\Desktop\Release"
+$win="VBM-windows-x64"
+$linux = "VBM-linux-x64"
 
-RemoveDirIfExists "$output\windows-x64"
-RemoveDirIfExists "$output\linux-x64"
-RemoveFileIfExists "$output\windows-x64.zip"
-RemoveFileIfExists "$output\linux-x64.zip"
+RemoveDirIfExists "$output\$win"
+RemoveDirIfExists "$output\$linux"
+RemoveFileIfExists "$output\$win.zip"
+RemoveFileIfExists "$output\$linux.zip"
 
 Write-Output "Removed old builds"
 
-dotnet publish -c release -o "$output\windows-x64" -r win-x64 --self-contained false
-dotnet publish -c release -o "$output\linux-x64" -r linux-x64 --self-contained false
+dotnet publish -c release -o "$output\$win" -r win-x64 --self-contained false
+dotnet publish -c release -o "$output\$linux" -r linux-x64 --self-contained false
 
-if ([System.IO.Directory]::Exists("$output\windows-x64"))
+if ([System.IO.Directory]::Exists("$output\$win"))
 {
-    Compress-Archive -Path "$output\windows-x64" -DestinationPath "$output\windows-x64.zip"
-    if ([System.IO.File]::Exists("$output\windows-x64.zip"))
+    Compress-Archive -Path "$output\$win" -DestinationPath "$output\$win.zip"
+    if ([System.IO.File]::Exists("$output\$win.zip"))
     {
         Write-Output "Windows build zipped successfully"
     }
@@ -43,10 +45,10 @@ else
     Write-Output "Failed to publish windows build"
 }
 
-if ([System.IO.Directory]::Exists("$output\linux-x64"))
+if ([System.IO.Directory]::Exists("$output\$linux"))
 {
-    Compress-Archive -Path "$output\linux-x64" "$output\linux-x64.zip"
-    if ([System.IO.File]::Exists("$output\linux-x64.zip"))
+    Compress-Archive -Path "$output\$linux" "$output\$linux.zip"
+    if ([System.IO.File]::Exists("$output\$linux.zip"))
     {
         Write-Output "Linux build zipped successfully"
     }
