@@ -93,6 +93,11 @@ namespace VBM
                 sb.Append(param.ParameterType.Name);
                 sb.Append(' ');
                 sb.Append(param.Name);
+                if (param.IsOptional)
+                {
+                    sb.Append(" default=");
+                    sb.Append(param.DefaultValue);
+                }
                 sb.Append('>');
             }
             return sb.ToString();
