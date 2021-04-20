@@ -18,14 +18,22 @@ namespace VBM
 
                 if (backup.IsValid())
                 {
-                    Console.WriteLine("That backup file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no");
-                    // TODO: comparison
-                    if (Console.ReadKey(true).Key != ConsoleKey.Y)
+                    Console.WriteLine("That backup file already exists. Comparison:");
+                    Utility.Compare(game, backup);
+                    if (!Utility.Confirm("Do you wish to continue with the backup operation?"))
                         return Result.Canceled;
                 }
 
-                Utility.Copy(game, backup);
-                return Result.Succeed($"Character \"{objectName}\" backed up successfully");
+                try
+                {
+                    Utility.Copy(game, backup);
+                    return Result.Succeed($"Character \"{objectName}\" backed up successfully");
+                }
+                catch (Exception e)
+                {
+                    Utility.PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
+                    return default;
+                }
             }
             else if (objectType == "world")
             {
@@ -37,19 +45,23 @@ namespace VBM
 
                 if (backup.IsValid())
                 {
-                    Console.WriteLine("That backup file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
+                    Console.WriteLine("That backup file already exists. Comparison:");
+                    Utility.Compare(game, backup);
 
-                    Console.WriteLine($"{objectName}.fwl (game) last modified {game.Metadata.LastWriteTime}");
-                    Console.WriteLine($"{objectName}.db  (game) last modified {game.Database.LastWriteTime}");
-                    Console.WriteLine($"{objectName}.fwl (backup) last modified {backup.Metadata.LastWriteTime}");
-                    Console.WriteLine($"{objectName}.db  (backup) last modified {backup.Database.LastWriteTime}");
-
-                    if (Console.ReadKey(true).Key != ConsoleKey.Y)
+                    if (!Utility.Confirm("Do you wish to continue with the backup operation?"))
                         return Result.Canceled;
                 }
 
-                Utility.Copy(game, backup);
-                return Result.Succeed($"World \"{objectName}\" backed up successfully");
+                try
+                {
+                    Utility.Copy(game, backup);
+                    return Result.Succeed($"World \"{objectName}\" backed up successfully");
+                }
+                catch (Exception e)
+                {
+                    Utility.PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
+                    return default;
+                }
             }
             return Result.Fail($"Invalid argument: {objectType}");
         }
@@ -74,14 +86,22 @@ namespace VBM
 
                 if (game.IsValid())
                 {
-                    Console.WriteLine("That game file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
-                    // TODO: comparison
-                    if (Console.ReadKey(true).Key != ConsoleKey.Y)
+                    Console.WriteLine("That game file already exists. Comparison:");
+                    Utility.Compare(game, backup);
+                    if (!Utility.Confirm("Do you wish to continue with the restore operation?"))
                         return Result.Canceled;
                 }
 
-                Utility.Copy(backup, game);
-                return Result.Succeed($"Character \"{objectName}\" restored successfully");
+                try
+                {
+                    Utility.Copy(backup, game);
+                    return Result.Succeed($"Character \"{objectName}\" restored successfully");
+                }
+                catch (Exception e)
+                {
+                    Utility.PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
+                    return default;
+                }
             }
             else if (objectType == "world")
             {
@@ -93,19 +113,22 @@ namespace VBM
 
                 if (game.IsValid())
                 {
-                    Console.WriteLine("That game file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
-
-                    Console.WriteLine($"{objectName}.fwl (backup) last modified {backup.Metadata.LastWriteTime}");
-                    Console.WriteLine($"{objectName}.db  (backup) last modified {backup.Database.LastWriteTime}");
-                    Console.WriteLine($"{objectName}.fwl (game) last modified {game.Metadata.LastWriteTime}");
-                    Console.WriteLine($"{objectName}.db  (game) last modified {game.Database.LastWriteTime}");
-
-                    if (Console.ReadKey(true).Key != ConsoleKey.Y)
+                    Console.WriteLine("That game file already exists. Comparison:");
+                    Utility.Compare(game, backup);
+                    if (!Utility.Confirm("Do you wish to continue with the restore operation?"))
                         return Result.Canceled;
                 }
 
-                Utility.Copy(backup, game);
-                return Result.Succeed("World \"" + objectName + "\" restored successfully");
+                try
+                {
+                    Utility.Copy(backup, game);
+                    return Result.Succeed("World \"" + objectName + "\" restored successfully");
+                }
+                catch (Exception e)
+                {
+                    Utility.PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
+                    return default;
+                }
             }
 
             return Result.Fail($"Invalid argument: {objectType}");
