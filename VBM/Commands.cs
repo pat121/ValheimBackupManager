@@ -55,12 +55,14 @@ namespace VBM
             }
             return Result.Fail("Invalid argument: " + objectType);
         }
+
         [Command("Help")]
         public static Result Help()
         {
             Utility.ShowHelp();
             return Result.Succeed("");
         }
+
         [Command("Restore")]
         public static Result Restore(string worldName)
         {
@@ -93,6 +95,7 @@ namespace VBM
             }
             return Result.Succeed("World \"" + worldName + "\" restored successfully");
         }
+
         [Command("SetGamePath")]
         public static Result SetGamePath(string newPath)
         {
