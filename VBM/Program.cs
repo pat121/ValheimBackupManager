@@ -8,7 +8,7 @@ namespace VBM
         static void Main(string[] args)
         {
             Utility.CheckOS();             // make sure OS is Windows or Linux
-            Utility.CheckGameInstalled();  // make sure the OS-specific game save directory exists
+            var notInstalled = !Utility.IsGameInstalled();
             Utility.Initialize();          // create backups directory if it doesn't already exist
 
             if (args.Length == 0)
@@ -23,6 +23,14 @@ namespace VBM
             var method = GetMethod(command);
             if (method == null)
                 Utility.PrintErrorAndExit("Command not recognized");
+
+            if (notInstalled && !Attribute.IsDefined(method, typeof(AccessibleWhenNotInstalledAttribute)))
+            {
+                var msg = "Error: could not locate Valheim save data. Please ensure that you have the game installed, or if " +
+                    "your save data is stored in a separate location, please specify that location with the command " +
+                    "\"VBM setgamepath <path>\"";
+                Utility.PrintErrorAndExit(msg);
+            }
 
             var info = new CommandInfo(method);
 
