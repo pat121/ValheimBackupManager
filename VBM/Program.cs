@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 
 namespace VBM
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
@@ -13,137 +14,135 @@ namespace VBM
 
             if (args.Length == 0)
             {
-                ShowHelp();
+                Utility.ShowHelp();
                 return;
             }
 
             var command = args[0];
             var arguments = args.Length > 1 ? args[1..] : Array.Empty<string>();
-            switch (command)
-            {
-                case "help":
-                    ShowHelp();
-                    break;
-                case "backup":
-                    if (arguments.Length != 1)
-                    {
-                        Console.WriteLine("ERROR: command \"backup\" expects one argument");
-                        return;
-                    }
-                    Backup(arguments[0]);
-                    break;
-                case "restore":
-                    if (arguments.Length != 1)
-                    {
-                        Console.WriteLine("ERROR: command \"restore\" expects one argument");
-                        return;
-                    }
-                    Restore(arguments[0]);
-                    break;
-                case "setgamepath":
-                    if (arguments.Length != 1)
-                    {
-                        Console.WriteLine("ERROR: command \"setgamepath\" expects one argument");
-                        return;
-                    }
-                    var path = arguments[0];
-                    if (!Directory.Exists(path))
-                    {
-                        Console.WriteLine("ERROR: given directory does not exist. Shame on you!");
-                        return;
-                    }
+            
+            var method = GetMethod(command);
+            if (method == null)
+                Utility.PrintErrorAndExit("Command not recognized");
 
-                    File.WriteAllText("path.txt", Path.GetFullPath(path));
-                    break;
-                default:
-                    Console.WriteLine($"ERROR: command {command} not recognized");
-                    break;
+            var info = new CommandInfo(method);
+
+            if (arguments.Length < info.RequiredArgCount)
+                Utility.PrintErrorAndExit("Too few arguments for command " + GetCommandSignature(method));
+            if (arguments.Length > info.ArgCount)
+                Utility.PrintErrorAndExit("Too many arguments for command " + GetCommandSignature(method));
+
+            var methodArgs = new object[info.ArgCount];
+
+            for (var i = 0; i < info.ArgCount; i++)
+            {
+                if (i >= arguments.Length)
+                    methodArgs[i] = info.Parameters[i].DefaultValue;
+                else
+                    methodArgs[i] = ConvertToArgType(arguments[i], info.ArgTypes[i]);
             }
-        }
 
-        static void Backup(string world)
-        {
-            var game = World.FromGameDir(world);
-            var backup = World.FromBackupDir(world);
-
-            if (!game.IsValid())
+            var resultAsObject = method.Invoke(null, methodArgs);
+            if (resultAsObject == null)
             {
-                Console.WriteLine("ERROR: one or more game files weren't found");
+                Console.WriteLine("Command returned void");
                 return;
             }
-
-            if (backup.IsValid())
+            var result = (Result)resultAsObject;
+            switch (result.ResultType)
             {
-                Console.WriteLine("That backup file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
-                
-                Console.WriteLine($"{world}.fwl (game) last modified {game.Metadata.LastWriteTime}");
-                Console.WriteLine($"{world}.db  (game) last modified {game.Database.LastWriteTime}");
-                Console.WriteLine($"{world}.fwl (backup) last modified {backup.Metadata.LastWriteTime}");
-                Console.WriteLine($"{world}.db  (backup) last modified {backup.Database.LastWriteTime}");
-
-                if (Console.ReadKey(true).Key != ConsoleKey.Y)
-                {
-                    Console.WriteLine("Operation canceled.");
-                    return;
-                }
+                case ResultType.Canceled:
+                    Utility.Print(result.ToString(), ConsoleColor.Yellow);
+                    break;
+                case ResultType.Failure:
+                    Utility.Print(result.ToString(), ConsoleColor.Red);
+                    break;
+                case ResultType.Success:
+                    Utility.Print(result.ToString(), ConsoleColor.Green);
+                    break;
             }
-
-            Copy(game, backup);
-            Console.WriteLine("Operation success.");
         }
-        static void Restore(string world)
-        {
-            var backup = World.FromBackupDir(world);
-            var game = World.FromGameDir(world);
 
-            if (!backup.IsValid())
-            {
-                Console.WriteLine("ERROR: one or more backup files weren't found");
-                return;
-            }
-
-            if (game.IsValid())
-            {
-                Console.WriteLine("That game file already exists. Do you want to overwrite it? (Press Y for yes, any other key for no)");
-
-                Console.WriteLine($"{world}.fwl (backup) last modified {backup.Metadata.LastWriteTime}");
-                Console.WriteLine($"{world}.db  (backup) last modified {backup.Database.LastWriteTime}");
-                Console.WriteLine($"{world}.fwl (game) last modified {game.Metadata.LastWriteTime}");
-                Console.WriteLine($"{world}.db  (game) last modified {game.Database.LastWriteTime}");
-
-                if (Console.ReadKey(true).Key != ConsoleKey.Y)
-                {
-                    Console.WriteLine("Operation canceled.");
-                    return;
-                }
-            }
-
-            Copy(backup, game);
-            Console.WriteLine("Operation success.");
-        }
-        static void Copy(World source, World dest)
+        public static object ConvertToArgType(string argument, Type argType)
         {
             try
             {
-                File.Copy(source.Database.FullName, dest.Database.FullName, true);
-                File.Copy(source.Metadata.FullName, dest.Metadata.FullName, true);
+                if (argType == typeof(string))
+                    return argument;
+                if (argType == typeof(int))
+                    return int.Parse(argument);
+
+                if (argType == typeof(double))
+                    return double.Parse(argument);
+
+                if (argType == typeof(float))
+                    return float.Parse(argument);
             }
-            catch (IOException e)
+            catch (Exception)
             {
-                var oldColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("An unexpected error occurred while copying files:");
-                Console.WriteLine(e.Message);
-                Console.ForegroundColor = oldColor;
-                Environment.Exit(0);
+                var msg = string.Format("Could not convert string value \"{0}\" to required type \"{1}\"", argument, argType.Name);
+                Utility.PrintErrorAndExit(msg);
             }
+            return null;  // this line is only included because otherwise the program would not compile
         }
-        static void ShowHelp()
+        public static string GetCommandSignature(MethodInfo method)
         {
-            if (File.Exists("About.txt"))
-                Console.Write(File.ReadAllText("About.txt"));
-            else
-                Console.WriteLine("ERROR: About file not found.");
+            var sb = new System.Text.StringBuilder(method.Name);
+
+            foreach (var param in method.GetParameters())
+            {
+                sb.Append(" <");
+                sb.Append(param.ParameterType.Name);
+                sb.Append(' ');
+                sb.Append(param.Name);
+                sb.Append('>');
+            }
+            return sb.ToString();
+        }
+        public static MethodInfo GetMethod(string command)
+        {
+            var methods = typeof(Commands).GetMethods();
+            
+            foreach (var m in methods)
+            {
+                if (Attribute.GetCustomAttribute(m, typeof(CommandAttribute)) is CommandAttribute attr)
+                    if (attr.CommandNameEquals(command))
+                        return m;
+            }
+            return null;
+        }
+    }
+
+    struct CommandInfo
+    {
+        public int ArgCount { get; }
+        public Type[] ArgTypes { get; }
+        public string Name { get; }
+        public int OptionalArgCount { get; }
+        public ParameterInfo[] Parameters { get; }
+        public int RequiredArgCount { get; }
+
+        public CommandInfo(MethodInfo method)
+        {
+            Parameters = method.GetParameters();
+            ArgCount = Parameters.Length;
+            ArgTypes = new Type[ArgCount];
+            Name = method.Name;
+            OptionalArgCount = 0;
+            RequiredArgCount = 0;
+
+            for (var i = 0; i < ArgCount; i++)
+            {
+                var param = Parameters[i];
+                ArgTypes[i] = param.ParameterType;
+
+                if (param.IsOptional)
+                {
+                    OptionalArgCount = ArgCount - RequiredArgCount;
+                    break;
+                }
+                RequiredArgCount++;
+            }
         }
     }
 }
