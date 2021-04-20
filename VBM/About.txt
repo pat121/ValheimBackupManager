@@ -27,4 +27,5 @@ Usage cases:
 
 Contact:
 	If you want to contact me with bug reports, suggestions, or general feedback, please paste
-	this link into your favorite browser: <TODO>
+	this link into your favorite browser: https://github.com/pat121/ValheimBackupManager/issues/new
+	Please note that you will need a GitHub account to post a new issue.
