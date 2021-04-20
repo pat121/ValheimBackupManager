@@ -69,10 +69,8 @@ namespace VBM
                     return argument;
                 if (argType == typeof(int))
                     return int.Parse(argument);
-
                 if (argType == typeof(double))
                     return double.Parse(argument);
-
                 if (argType == typeof(float))
                     return float.Parse(argument);
             }
