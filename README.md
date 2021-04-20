@@ -38,4 +38,4 @@ fi
 # Uninstalling
 If you want to delete VBM for whatever reason, all you have to do is delete its containing folder. VBM doesn't modify the Windows registry or put configuration files in weird places, so there's no special cleanup that needs to be done if you want to delete it. If you want, you can also delete the backups directory:
 - On Windows, it's located at %USERPROFILE%\AppData\LocalLow\ValheimBackups
-- On Linux, you'll find it at ~/ValheimBackups
+- On Linux, you'll find it at ~/.ValheimBackups
