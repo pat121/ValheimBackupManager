@@ -20,7 +20,7 @@ namespace VBM
 
             var command = args[0];
             var arguments = args.Length > 1 ? args[1..] : Array.Empty<string>();
-            
+
             var method = GetMethod(command);
             if (method == null)
                 Utility.PrintErrorAndExit("Command not recognized");
@@ -32,23 +32,8 @@ namespace VBM
             if (arguments.Length > info.ArgCount)
                 Utility.PrintErrorAndExit("Too many arguments for command " + GetCommandSignature(method));
 
-            var methodArgs = new object[info.ArgCount];
-
-            for (var i = 0; i < info.ArgCount; i++)
-            {
-                if (i >= arguments.Length)
-                    methodArgs[i] = info.Parameters[i].DefaultValue;
-                else
-                    methodArgs[i] = ConvertToArgType(arguments[i], info.ArgTypes[i]);
-            }
-
-            var resultAsObject = method.Invoke(null, methodArgs);
-            if (resultAsObject == null)
-            {
-                Console.WriteLine("Command returned void");
-                return;
-            }
-            var result = (Result)resultAsObject;
+            var methodArgs = BuildArgumentList(arguments, info);
+            var result = (Result)method.Invoke(null, methodArgs);
             switch (result.ResultType)
             {
                 case ResultType.Canceled:
@@ -63,6 +48,20 @@ namespace VBM
             }
         }
 
+        public static object[] BuildArgumentList(string[] args, CommandInfo command)
+        {
+            var methodArgs = new object[command.ArgCount];
+
+            for (var i = 0; i < command.ArgCount; i++)
+            {
+                if (i >= args.Length)
+                    methodArgs[i] = command.Parameters[i].DefaultValue;
+                else
+                    methodArgs[i] = ConvertToArgType(args[i], command.ArgTypes[i]);
+            }
+
+            return methodArgs;
+        }
         public static object ConvertToArgType(string argument, Type argType)
         {
             try
@@ -83,7 +82,7 @@ namespace VBM
                 var msg = string.Format("Could not convert string value \"{0}\" to required type \"{1}\"", argument, argType.Name);
                 Utility.PrintErrorAndExit(msg);
             }
-            return null;  // this line is only included because otherwise the program would not compile
+            return null;
         }
         public static string GetCommandSignature(MethodInfo method)
         {
@@ -102,7 +101,7 @@ namespace VBM
         public static MethodInfo GetMethod(string command)
         {
             var methods = typeof(Commands).GetMethods();
-            
+
             foreach (var m in methods)
             {
                 if (Attribute.GetCustomAttribute(m, typeof(CommandAttribute)) is CommandAttribute attr)
