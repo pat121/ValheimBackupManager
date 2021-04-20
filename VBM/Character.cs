@@ -10,7 +10,7 @@ namespace VBM
 
         private Character(string charName, bool isGameChar)
         {
-            Char = new FileInfo($"{(isGameChar ? Utility.GameDir : Utility.BackupDir)}characters{Utility.DirectorySep}{charName}.fch");
+            Char = new FileInfo($"{(isGameChar ? Utility.GameDir : Utility.BackupDir)}characters/{charName}.fch");
         }
 
         public static Character FromBackupDir(string name)

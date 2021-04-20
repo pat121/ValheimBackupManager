@@ -11,7 +11,7 @@ namespace VBM
 
         private World(string name, bool isGameWorld)
         {
-            var root = $"{(isGameWorld ? Utility.GameDir : Utility.BackupDir)}worlds{Utility.DirectorySep}{name}.";
+            var root = $"{(isGameWorld ? Utility.GameDir : Utility.BackupDir)}worlds/{name}.";
             var mdPath = $"{root}fwl";
             var dbPath = $"{root}db";
             Database = new FileInfo(dbPath);

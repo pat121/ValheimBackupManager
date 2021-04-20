@@ -6,20 +6,18 @@ namespace VBM
     static class Utility
     {
         private const string LinuxBackupDir = "/ValheimBackups/";
-        private const string WindowsBackupDir = @"\AppData\LocalLow\ValheimBackups\";
+        private const string WindowsBackupDir = "/AppData/LocalLow/ValheimBackups/";
         private const string LinuxGameDir = "/.config/unity3d/IronGate/Valheim/";
-        private const string WindowsGameDir = @"\AppData\LocalLow\IronGate\Valheim\";
+        private const string WindowsGameDir = "/AppData/LocalLow/IronGate/Valheim/";
 
         public static readonly string BackupDir;
         public static readonly string GameDir;
-        public static readonly char DirectorySep;
-
+        
         static Utility()
         {
             var windows = OperatingSystem.IsWindows();
             BackupDir = GetUserProfile() + (windows ? WindowsBackupDir : LinuxBackupDir);
-            DirectorySep = windows ? '\\' : '/';
-
+            
             if (File.Exists("path.txt"))
             {
                 GameDir = File.ReadAllText("path.txt");
