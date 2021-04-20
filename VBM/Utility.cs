@@ -45,6 +45,27 @@ namespace VBM
             Console.WriteLine("This program is only intended for Windows and Linux.");
             Environment.Exit(0);
         }
+        public static void Copy(World source, World dest)
+        {
+            try
+            {
+                File.Copy(source.Database.FullName, dest.Database.FullName, true);
+                File.Copy(source.Metadata.FullName, dest.Metadata.FullName, true);
+            }
+            catch (IOException e)
+            {
+                var oldColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("An unexpected error occurred while copying files:");
+                Console.WriteLine(e.Message);
+                Console.ForegroundColor = oldColor;
+                Environment.Exit(0);
+            }
+        }
+        private static string GetUserProfile()
+        {
+            return Environment.GetEnvironmentVariable(OperatingSystem.IsWindows() ? "USERPROFILE" : "USER");
+        }
         public static void Initialize()
         {
             // Since CreateDirectory() does nothing if it already exists, don't bother returning
@@ -53,10 +74,24 @@ namespace VBM
             Directory.CreateDirectory($"{BackupDir}worlds");
             Directory.CreateDirectory($"{BackupDir}characters");
         }
-
-        private static string GetUserProfile()
+        public static void PrintErrorAndExit(string message)
         {
-            return Environment.GetEnvironmentVariable(OperatingSystem.IsWindows() ? "USERPROFILE" : "USER");
+            Print(message, ConsoleColor.Red);
+            Environment.Exit(0);
+        }
+        public static void Print(string message, ConsoleColor color)
+        {
+            var oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.WriteLine(message);
+            Console.ForegroundColor = oldColor;
+        }
+        public static void ShowHelp()
+        {
+            if (File.Exists("About.txt"))
+                Console.Write(File.ReadAllText("About.txt"));
+            else
+                Console.WriteLine("ERROR: About file not found.");
         }
     }
 }
