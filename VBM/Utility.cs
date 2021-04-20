@@ -5,7 +5,7 @@ namespace VBM
 {
     static class Utility
     {
-        private const string LinuxBackupDir = "/ValheimBackups/";
+        private const string LinuxBackupDir = "/.ValheimBackups/";
         private const string WindowsBackupDir = "/AppData/LocalLow/ValheimBackups/";
         private const string LinuxGameDir = "/.config/unity3d/IronGate/Valheim/";
         private const string WindowsGameDir = "/AppData/LocalLow/IronGate/Valheim/";
