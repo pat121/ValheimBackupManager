@@ -43,28 +43,78 @@ namespace VBM
             Console.WriteLine("This program is only intended for Windows and Linux.");
             Environment.Exit(0);
         }
+        public static void Compare(Character game, Character backup)
+        {
+            if (game.Hash() == backup.Hash())
+            {
+                Console.WriteLine("The file contents are identical.");
+                return;
+            }
+
+            if (game.Char.LastWriteTime == backup.Char.LastWriteTime)
+            {
+                Console.WriteLine("The file contents are not identical, but they were both last written at the same time.");
+                return;
+            }
+
+            if (game.Char.LastWriteTime > backup.Char.LastWriteTime)
+                Console.WriteLine("The character file stored in the game directory is newer.");
+            else
+                Console.WriteLine("The character file stored in the backups directory is newer.");
+
+            Console.WriteLine($"Game directory copy last modified     {game.Char.LastWriteTime}");
+            Console.WriteLine($"Backup directory copy last modified   {backup.Char.LastWriteTime}");
+        }
+        public static void Compare(World game, World backup)
+        {
+            if (game.HashDatabase() == backup.HashDatabase())
+                Console.WriteLine("The save files are identical");
+            else
+            {
+                if (game.Database.LastWriteTime == backup.Database.LastWriteTime)
+                    Console.WriteLine("The save files were last modified at the same time, but they are not identical");
+                else
+                {
+                    if (game.Database.LastWriteTime > backup.Database.LastWriteTime)
+                        Console.WriteLine("The save file copy stored in the game directory is newer");
+                    else
+                        Console.WriteLine("The save file copy stored in the backups directory is newer");
+                    Console.WriteLine($"Game directory copy last modified     {game.Database.LastWriteTime}");
+                    Console.WriteLine($"Backup directory copy last modified   {backup.Database.LastWriteTime}");
+                }
+            }
+
+            if (game.HashMetadata() == backup.HashMetadata())
+                Console.WriteLine("The metadata files are identical");
+            else
+            {
+                if (game.Metadata.LastWriteTime == backup.Metadata.LastWriteTime)
+                    Console.WriteLine("The metadata files were last modified at the same time, but they are not identical");
+                else
+                {
+                    if (game.Metadata.LastWriteTime > backup.Metadata.LastWriteTime)
+                        Console.WriteLine("The metadata file copy stored in the game directory is newer");
+                    else
+                        Console.WriteLine("The meta file copy stored in the backups directory is newer");
+                    Console.WriteLine($"Game directory copy last modified     {game.Metadata.LastWriteTime}");
+                    Console.WriteLine($"Backup directory copy last modified   {backup.Metadata.LastWriteTime}");
+                }
+            }
+        }
+        public static bool Confirm(string prompt, ConsoleKey yes = ConsoleKey.Y)
+        {
+            Console.Write(prompt);
+            Console.WriteLine($" (Press {yes} for yes, any other key for no)");
+            return Console.ReadKey(true).Key == yes;
+        }
         public static void Copy(Character source, Character dest)
         {
-            try
-            {
-                File.Copy(source.Char.FullName, dest.Char.FullName, true);
-            }
-            catch (IOException e)
-            {
-                PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
-            }
+            File.Copy(source.Char.FullName, dest.Char.FullName, true);
         }
         public static void Copy(World source, World dest)
         {
-            try
-            {
-                File.Copy(source.Database.FullName, dest.Database.FullName, true);
-                File.Copy(source.Metadata.FullName, dest.Metadata.FullName, true);
-            }
-            catch (IOException e)
-            {
-                PrintErrorAndExit("An unexpected error occurred while copying files: " + e.Message);
-            }
+            File.Copy(source.Database.FullName, dest.Database.FullName, true);
+            File.Copy(source.Metadata.FullName, dest.Metadata.FullName, true);
         }
         private static string GetUserProfile()
         {
