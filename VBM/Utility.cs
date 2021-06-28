@@ -139,10 +139,10 @@ namespace VBM
         }
         public static void ShowHelp()
         {
-            if (File.Exists("About.txt"))
-                Console.Write(File.ReadAllText("About.txt"));
+            var helpFile = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "About.txt");
+            if (File.Exists(helpFile))
+                Console.Write(File.ReadAllText(helpFile));
             else
                 Console.WriteLine("ERROR: About file not found.");
-        }
     }
 }
