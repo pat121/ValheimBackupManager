@@ -144,5 +144,6 @@ namespace VBM
                 Console.Write(File.ReadAllText(helpFile));
             else
                 Console.WriteLine("ERROR: About file not found.");
+        }
     }
 }
